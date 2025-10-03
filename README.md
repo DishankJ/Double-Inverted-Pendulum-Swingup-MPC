@@ -1,6 +1,4 @@
 ### Images for Pendulum up-up position stabilisation
-In solving this problem an energy-based(KE - PE) objective function was used, which is also a reason why the cart didn't come back to '0', which can be done by constraining the x-coordinate of cart.
-
 ![alt](https://github.com/DishankJ/Double-Inverted-Pendulum-Swingup-MPC/blob/main/media/dip_up_control_trajectory.png?raw=true)
 
 ![alt](https://github.com/DishankJ/Double-Inverted-Pendulum-Swingup-MPC/blob/main/media/dip_up_state_trajectory.png?raw=true)
@@ -8,7 +6,7 @@ In solving this problem an energy-based(KE - PE) objective function was used, wh
 ![alt](https://github.com/DishankJ/Double-Inverted-Pendulum-Swingup-MPC/blob/main/media/double_inv_pendulum_up__mpc.gif?raw=true)
 
 ### Images for Pendulum up-up position stabilisation
-In solving this problem an energy-based(KE - PE) objective function was used, which is also a reason why the cart didn't come back to '0', which can be done by constraining the x-coordinate of cart.
+Cost function used here was taken from existing solutions since a simple energy minimization doesn't work possibly because MPC doesn't know if the problem is feasible or look that far ahead into the future to solve it.
 
 ![alt](https://github.com/DishankJ/Double-Inverted-Pendulum-Swingup-MPC/blob/main/media/dip_down_state_trajectory.png?raw=true)
 

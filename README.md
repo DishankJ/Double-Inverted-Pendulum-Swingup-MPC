@@ -6,7 +6,7 @@
 ![alt](https://github.com/DishankJ/Double-Inverted-Pendulum-Swingup-MPC/blob/main/media/double_inv_pendulum_up__mpc.gif?raw=true)
 
 ### Images for Pendulum up-up position stabilisation
-Cost function used here was taken from existing solutions since a simple energy minimization doesn't work possibly because MPC doesn't know if the problem is feasible or look that far ahead into the future to solve it.
+Cost function used here was taken from existing solutions since a simple energy minimization doesn't work possibly because MPC doesn't know if the problem is feasible or look that far ahead into the future to solve it. Euler-discretization was used here and it seemed to work fine because smaller time steps were taken.
 
 ![alt](https://github.com/DishankJ/Double-Inverted-Pendulum-Swingup-MPC/blob/main/media/dip_down_state_trajectory.png?raw=true)
 

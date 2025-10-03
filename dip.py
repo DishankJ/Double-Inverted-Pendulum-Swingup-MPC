@@ -44,16 +44,16 @@ def solve_mpc(x0):
     cost = 0.0
 
     # cost forumlation to mminimize kinetic energy and maximize potential energy
-    for t in range(N):
-        cost += calculate_energy(x, t)
-        cost += 0.5*u[:, t].T@R@u[:, t]
-    cost += calculate_energy(x, N)
+    #for t in range(N):
+    #    cost += calculate_energy(x, t)
+    #    cost += 0.5*u[:, t].T@R@u[:, t]
+    #cost += calculate_energy(x, N)
 
     # alternative cost formulation to stabilize around the upright position
-    # for t in range(N):
-    #     cost += 0.5*x[:, t].T@Q@x[:, t] # stage cost
-    #     cost += 0.5*u[:, t].T@R@u[:, t]
-    # cost += 0.5*x[:, N].T@Qf@x[:, N] # terminal cost
+    for t in range(N):
+        cost += 0.5*x[:, t].T@Q@x[:, t] # stage cost
+        cost += 0.5*u[:, t].T@R@u[:, t]
+    cost += 0.5*x[:, N].T@Qf@x[:, N] # terminal cost
 
     opti.minimize(cost)
 
@@ -75,29 +75,10 @@ def solve_mpc(x0):
         [0.2857]
     ])
 
-    # system dynamics linearized around the down-down position
-    # A = ca.DM([
-    #     [0.0, 0.0, 0.0, 1.0, 0.0, 0.0],
-    #     [0.0, 0.0, 0.0, 0.0, 1.0, 0.0],
-    #     [0.0, 0.0, 0.0, 0.0, 0.0, 1.0],
-    #     [0.0, -7.35, 0.7875, 0.0, 0.0, 0.0],
-    #     [0.0, -73.5, 33.075, 0.0, 0.0, 0.0],
-    #     [0.0, 58.8, -51.1, 0.0, 0.0, 0.0]
-    # ])
-    # B = ca.DM([
-    #     [0.0],
-    #     [0.0],
-    #     [0.0],
-    #     [0.60714],
-    #     [1.5],
-    #     [-0.2857]
-    # ])
-
     # problem constraints
     opti.subject_to(x[:, 0] == x0)
     for t in range(N):
         opti.subject_to(x[:, t+1] == x[:, t] + dt*A@x[:, t] + dt*B@u[:, t]) # dynamics constraint
-        # opti.subject_to(x[:, t+1] == x[:, t] + dt*A@(x[:, t] - ca.DM([[0], [np.pi], [np.pi], [0], [0], [0]])) + dt*B@u[:, t]) # dynamics constraint
     opti.subject_to(opti.bounded(-100, u, 100))
     # opti.subject_to(opti.bounded(-8, x, 8))
 
@@ -109,10 +90,9 @@ def solve_mpc(x0):
 if __name__ == "__main__":
     x0 = opti.parameter(6)
     x0_np = np.array([0.0, 0.4, 0.2, 0.0, 0.0, 0.0])
-    # x0_np = np.array([0.0, 0.99*np.pi, 0.99*np.pi, 0.0, 0.0, 0.0])
     opti.set_value(x0, x0_np)
 
-    time_length = 100
+    time_length = 40
     states_buffer = {'x': [x0_np[0]], 'theta1': [x0_np[1]], 'theta2': [x0_np[2]]}
     control_buffer = [0.0]
     time_gone_by = [0.0]

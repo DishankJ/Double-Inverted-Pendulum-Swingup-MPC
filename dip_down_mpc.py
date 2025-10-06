@@ -34,7 +34,7 @@ NU = 1
 
 N = 50
 dt = 0.02
-Nsim = 150
+Nsim = 100
 x_0 = np.array([[0], [np.pi], [np.pi], [0], [0], [0]])
 
 x = ca.SX.sym('x', NX)
@@ -62,19 +62,27 @@ ub_x[1] = np.inf
 ub_x[2] = np.inf
 ub_x.reshape((1, -1))
 
-lb_u = -40*np.ones((NU,1))
-ub_u = 40*np.ones((NU,1))
+lb_u = -60*np.ones((NU,1))
+ub_u = 60*np.ones((NU,1))
 
 # %%
-Q = np.diag([10,0.5,0.5,1,1,1])
-Qf = np.diag([100,20,20,1,1,1])
-R = 1
+# Q = np.diag([10,0.5,0.5,1,1,1])
+# Qf = np.diag([100,20,20,1,1,1])
+# R = 1
+Q = np.diag([10,5,5,1,0.1,0.1])
+Qf = np.diag([20,20,20,1,1,1])
+R = 0.01
 
-w_stage_phi = 1
-w_term_phi = 10
+# w_stage_phi = 1
+# w_term_phi = 10
+
+# w_stage_energy = 1
+# w_term_energy = 30
+
 
 w_stage_energy = 1
-w_term_energy = 30
+w_term_energy = 100
+
 
 # %%
 E_kin_cart = 1 / 2 * m0 * x[3]**2
@@ -87,6 +95,7 @@ E_pot = m1 * g * l1 * ca.cos(x[1]) + m2 * g * (L1 * ca.cos(x[1]) +
 E_target = m1*g*l1 + m2*g*(L1 + l2)
 
 E_total = E_kin + E_pot
+E_diff = E_kin - E_pot
 
 x_target1 = np.array([[0], [0], [0], [0], [0], [0]])
 x_target = ca.SX.sym("x_target", NX, 1)
@@ -97,12 +106,16 @@ x_diff = x - x_target
 J_stage = x_diff.T@Q@x_diff + u.T@R@u
 J_terminal = x_diff.T@Qf@x_diff
 
-J_phi1_phi2 = (ca.sin(0.5*x_diff[1])**2 + ca.sin(0.5*x_diff[2])**2)
-J_stage += w_stage_phi * J_phi1_phi2
-J_terminal += w_term_phi * J_phi1_phi2
+# J_phi1_phi2 = (ca.sin(0.5*x_diff[1])**2 + ca.sin(0.5*x_diff[2])**2)
+# J_stage += w_stage_phi * J_phi1_phi2
+# J_terminal += w_term_phi * J_phi1_phi2
 
-J_stage += w_stage_energy * (E_target - E_total)**2
-J_terminal += w_term_energy * (E_target - E_pot)**2 + w_term_energy * (E_kin)**2
+# J_stage += w_stage_energy * (E_target - E_total)**2
+# J_terminal += w_term_energy * (E_target - E_pot)**2 + w_term_energy * (E_kin)**2
+
+
+J_stage += w_stage_energy * E_diff
+J_terminal += w_term_energy * E_diff
 
 stage_cost_fcn = ca.Function("J_stage",[x,u, x_target],[J_stage])
 terminal_cost_fcn = ca.Function('J_terminal',[x, x_target],[J_terminal])
